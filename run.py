@@ -10,7 +10,8 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
     ]
 
-SCOPED_CREDS = (Credentials.from_service_account_file('creds.json')).with_scopes(SCOPE)
+CREDS = Credentials.from_service_account_file("creds.json")
+SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('coctail_quiz')
 
@@ -18,14 +19,20 @@ def get_sales_data():
     """
     Get sales figures input from user
     """
-    print("Please enter sales dta from last market.")
-    print("Data should be six numbers,separetedseparated by commas.")
-    print("Example:10,20,30,40,50,60\n")
+    while True:
+        print("Please enter sales dta from last market.")
+        print("Data should be six numbers,separetedseparated by commas.")
+        print("Example:10,20,30,40,50,60\n")
 
-    data_str = input("Enter your data here:")
+        data_str = input("Enter your data here:")
     
-    sales_data = data_str.split(",")
-    print(sales_data)
+        sales_data = data_str.split(",")
+        print(sales_data)
+
+        if validate_data(sales_data):
+            print("Data is valid!")
+            break
+    return sales_data
 
 def validate_data(values):
     """
@@ -41,6 +48,7 @@ def validate_data(values):
             )
     except ValueError as e:
         print("Invalid data: {e},please try again.\n")
+        return False
+    return True
 
-
-get_sales_data()
+data = get_sales_data()
